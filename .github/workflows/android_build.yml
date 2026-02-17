@@ -1,187 +1,86 @@
-name: MNN Release Build (Robust & Signed)
+name: Build Release APK
 
 on:
   workflow_dispatch:
 
 jobs:
   build:
-    name: Build MNN LLM Android
     runs-on: ubuntu-latest
-    
     steps:
-      # 1. Checkout com Submódulos (Essencial para dependências do MNN)
-      - name: Checkout Repository
+      - name: Checkout do Código
         uses: actions/checkout@v4
-        with:
-          repository: alibaba/MNN
-          ref: master
-          submodules: recursive
-          fetch-depth: 1
 
-      # 2. Setup Java
-      - name: Setup Java 17
+      - name: Configurar Ambiente Java
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
 
-      # 3. Setup Android SDK & NDK (Versão r25c é muito estável para ML)
-      - name: Setup Android NDK
-        id: setup-ndk
-        run: |
-          NDK_VERSION="25.2.9519653"
-          echo "y" | sudo ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --install "ndk;$NDK_VERSION" "build-tools;35.0.0"
-          
-          # CRÍTICO: Define a variável de ambiente para o CMake do MNN encontrar o toolchain
-          ANDROID_NDK_PATH="${ANDROID_HOME}/ndk/$NDK_VERSION"
-          echo "ANDROID_NDK=$ANDROID_NDK_PATH" >> $GITHUB_ENV
-          echo "ANDROID_NDK_HOME=$ANDROID_NDK_PATH" >> $GITHUB_ENV
-          
-          echo "NDK instalado em: $ANDROID_NDK_PATH"
+      - name: Instalar Dependências
+        run: npm install
 
-      # 4. Localizar o Projeto Android Dinamicamente (Blindado)
-      # Busca a raiz pela existência do gradlew, que é a âncora universal de projetos Android
-      - name: Locate Android App Directory
-        id: locate_app
+      - name: Extrair Versão do package.json
+        id: get_version
         run: |
-          # 1. Encontra o build.gradle do módulo principal que contém o app MnnLlmChat
-          TARGET_GRADLE=$(find apps/Android -name "build.gradle" -print0 | xargs -0 grep -l "com.android.application" | head -n 1)
-          
-          if [ -z "$TARGET_GRADLE" ]; then
-            echo "❌ ERRO: Módulo de aplicação Android não encontrado em apps/Android."
-            exit 1
+          VERSION=$(node -p "require('./package.json').version")
+          echo "versao=$VERSION" >> $GITHUB_OUTPUT
+          echo "Sincronizando com a versão: $VERSION"
+
+      - name: Build Next.js
+        run: npm run build
+
+      - name: Sincronizar com Capacitor e Atualizar Versão Android
+        run: |
+          if [ ! -d "android" ]; then
+            npx cap add android
           fi
+          npx cap sync android
           
-          echo "Arquivo gradle alvo: $TARGET_GRADLE"
-          APP_MODULE_DIR=$(dirname "$TARGET_GRADLE")
-          
-          # 2. Encontra a raiz do projeto (onde está o gradlew) subindo diretórios
-          CURRENT_DIR="$APP_MODULE_DIR"
-          FOUND_ROOT=""
-          for i in {1..3}; do
-            if [ -f "$CURRENT_DIR/gradlew" ]; then
-              FOUND_ROOT="$CURRENT_DIR"
-              break
-            fi
-            CURRENT_DIR=$(dirname "$CURRENT_DIR")
-          done
-          
-          if [ -z "$FOUND_ROOT" ]; then
-            echo "❌ ERRO: Arquivo gradlew não encontrado acima de $APP_MODULE_DIR"
-            exit 1
-          fi
-          
-          echo "APP_ROOT=$FOUND_ROOT" >> $GITHUB_ENV
-          echo "APP_MODULE_DIR=$APP_MODULE_DIR" >> $GITHUB_ENV
-          echo "✅ Projeto encontrado em: $FOUND_ROOT"
-          echo "✅ Módulo do App em: $APP_MODULE_DIR"
+          # ATUALIZA A VERSÃO NO ANDROID
+          VERSION="${{ steps.get_version.outputs.versao }}"
+          # Muda o versionName para o que está no package.json
+          sed -i "s/versionName \".*\"/versionName \"$VERSION\"/" android/app/build.gradle
+          # Muda o versionCode para o número do build do GitHub (número inteiro sempre crescente)
+          sed -i "s/versionCode [0-9]*/versionCode ${{ github.run_number }}/" android/app/build.gradle
 
-      # 5. Build Nativo (C++)
-      # Não criamos a pasta build_64 manualmente para evitar aninhamento errado
-      - name: Build Native Engine (libMNN.so)
-        working-directory: project/android
+      - name: Gerar Ícones e Splash
         run: |
-          # Garante permissão de execução
-          chmod +x build_64.sh
-          
-          # Flags padronizadas para ON/OFF e otimizadas para LLM Mobile
-          ./build_64.sh \
-            -DMNN_LOW_MEMORY=ON \
-            -DMNN_CPU_WEIGHT_DEQUANT_GEMM=ON \
-            -DMNN_BUILD_LLM=ON \
-            -DMNN_SUPPORT_TRANSFORMER_FUSE=ON \
-            -DLLM_SUPPORT_VISION=ON \
-            -DMNN_BUILD_OPENCV=ON \
-            -DMNN_IMGCODECS=ON \
-            -DLLM_SUPPORT_AUDIO=ON \
-            -DMNN_BUILD_AUDIO=ON \
-            -DMNN_SUPPORT_BF16=ON \
-            -DMNN_OPENCL=ON \
-            -DMNN_ARM82=ON \
-            -DMNN_USE_LOGCAT=OFF
+          npm install @capacitor/assets
+          mkdir -p assets
+          cp public/images/icon.png assets/icon.png || true
+          cp public/images/logo-do-app.png assets/splash.png || true
+          npx capacitor-assets generate --android
+          npx cap sync android
 
-      # 6. Copiar Bibliotecas .so para o Projeto Android
-      - name: Install Native Libs to App
+      - name: Compilar APK (Release)
         run: |
-          # Define destino (baseado no path descoberto anteriormente)
-          JNI_DIR="${{ env.APP_MODULE_DIR }}/src/main/jniLibs/arm64-v8a"
-          mkdir -p "$JNI_DIR"
-          
-          echo "Copiando bibliotecas de project/android/build_64 para $JNI_DIR..."
-          
-          # Usa find para pegar qualquer .so, mesmo que esteja em subpastas dentro do build
-          find project/android/build_64 -name "*.so" -exec cp -v {} "$JNI_DIR/" \;
-          
-          # Verificação
-          COUNT=$(find "$JNI_DIR" -maxdepth 1 -name "*.so" | wc -l)
-          if [ "$COUNT" -eq "0" ]; then
-            echo "❌ ERRO: Nenhuma biblioteca .so foi copiada. O build nativo falhou silenciosamente?"
-            exit 1
-          fi
-          echo "✅ $COUNT bibliotecas copiadas com sucesso."
+          cd android && chmod +x gradlew && ./gradlew assembleRelease
 
-      # 7. Configurar Keystore e Versionamento
-      - name: Prepare Android Build
-        run: |
-          GRADLE_FILE="${{ env.APP_MODULE_DIR }}/build.gradle"
-          
-          # Atualiza VersionCode e VersionName
-          sed -i "s/versionCode [0-9]*/versionCode ${{ github.run_number }}/" "$GRADLE_FILE"
-          sed -i "s/versionName \".*\"/versionName \"0.7.6-dev${{ github.run_number }}\"/" "$GRADLE_FILE"
-          
-          # Cria o arquivo keystore a partir do segredo
-          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > release.keystore
-
-      # 8. Compilar APK (Gradle)
-      - name: Build APK with Gradle
-        working-directory: ${{ env.APP_ROOT }}
-        run: |
-          chmod +x gradlew
-          ./gradlew assembleRelease --stacktrace --no-daemon
-
-      # 9. Assinar e Otimizar (Caminhos Dinâmicos)
-      - name: Sign and Align APK
+      - name: Otimizar e Assinar APK
         id: sign_app
         run: |
-          # Encontra a versão mais recente do build-tools instalada
-          BUILD_TOOLS_DIR=$(ls -d ${ANDROID_HOME}/build-tools/*/ | sort -V | tail -n 1)
-          echo "Usando Build Tools em: $BUILD_TOOLS_DIR"
+          BUILD_TOOLS_PATH=$(ls -d ${ANDROID_SDK_ROOT}/build-tools/* | tail -1)
           
-          ZIPALIGN="$BUILD_TOOLS_DIR/zipalign"
-          APKSIGNER="$BUILD_TOOLS_DIR/apksigner"
+          UNSIGNED_APK="android/app/build/outputs/apk/release/app-release-unsigned.apk"
+          ALIGNED_APK="Arcana-aligned.apk"
+          SIGNED_APK="Arcana-v${{ steps.get_version.outputs.versao }}.apk"
           
-          # Localiza o APK unsigned (pode variar o nome dependendo do gradle plugin)
-          UNSIGNED_APK=$(find ${{ env.APP_MODULE_DIR }}/build/outputs/apk/release -name "*-release-unsigned.apk" | head -n 1)
+          echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > release.keystore
           
-          if [ -z "$UNSIGNED_APK" ]; then
-             echo "⚠️ APK unsigned padrão não encontrado, procurando qualquer APK release..."
-             UNSIGNED_APK=$(find ${{ env.APP_ROOT }} -name "*.apk" | grep "release" | grep -v "signed" | head -n 1)
-          fi
+          $BUILD_TOOLS_PATH/zipalign -v 4 "$UNSIGNED_APK" "$ALIGNED_APK"
           
-          if [ -z "$UNSIGNED_APK" ]; then
-             echo "❌ ERRO: APK não encontrado após o build."
-             ls -R ${{ env.APP_ROOT }}/app/build/outputs/apk/
-             exit 1
-          fi
-          
-          FINAL_APK="MNN-LLM-Chat-v0.7.6-${{ github.run_number }}.apk"
-          
-          # 1. Zipalign
-          "$ZIPALIGN" -v 4 "$UNSIGNED_APK" "aligned.apk"
-          
-          # 2. Assinar
-          "$APKSIGNER" sign --ks release.keystore \
+          $BUILD_TOOLS_PATH/apksigner sign --ks release.keystore \
             --ks-key-alias "${{ secrets.ANDROID_KEY_ALIAS }}" \
             --ks-pass pass:"${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" \
             --key-pass pass:"${{ secrets.ANDROID_KEY_PASSWORD }}" \
-            --out "$FINAL_APK" \
-            "aligned.apk"
+            --out "$SIGNED_APK" \
+            "$ALIGNED_APK"
           
-          echo "signed_file=$FINAL_APK" >> $GITHUB_OUTPUT
+          echo "signed_file=$SIGNED_APK" >> $GITHUB_OUTPUT
+          rm release.keystore
 
-      # 10. Upload do Resultado
-      - name: Upload Signed APK
+      - name: Upload APK Assinado
         uses: actions/upload-artifact@v4
         with:
-          name: MNN-LLM-Android-App
+          name: Arcana-v${{ steps.get_version.outputs.versao }}
           path: ${{ steps.sign_app.outputs.signed_file }}
