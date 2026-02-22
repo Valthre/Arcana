@@ -8,7 +8,7 @@ const _geist = Geist({ subsets: ["latin"] })
 const _geistMono = Geist_Mono({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "ARCANA - Sua Biblioteca Local.",
+  title: "ARCANA - Sua Biblioteca Local",
   description: "Gerencie seus snippets e fragmentos de código de forma local e privada",
   icons: {
     icon: [
@@ -32,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR">
-      <body className="font-sans antialiased">
+      <body className="font-sans antialiased" suppressHydrationWarning>
         <ArcanaProvider>{children}</ArcanaProvider>
       </body>
     </html>

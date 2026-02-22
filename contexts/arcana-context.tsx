@@ -1,6 +1,7 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
+import { exportJsonFile, shareJsonFile, copyJsonToClipboard } from "@/lib/file-handler"
 
 // ═══════════════════════════════════════════════════════════════════════════
 // TIPOS E INTERFACES
@@ -23,13 +24,11 @@ export interface ArcanaSettings {
   starCount: number
   autoStars: boolean
   performanceMode: boolean
-  // ← NOVOS CONTROLES AVANÇADOS
-  customFPS: number         // 15-60 FPS
-  glowQuality: "none" | "low" | "medium" | "high"  // Qualidade do glow
-  enableAnimations: boolean // Liga/desliga animações das estrelas
+  customFPS: number
+  glowQuality: "none" | "low" | "medium" | "high"
+  enableAnimations: boolean
 }
 
-// Resultado das operações de backup
 interface BackupResult {
   success: boolean
   message: string
@@ -69,12 +68,8 @@ const SETTINGS_STORE = "settings"
 // UTILITÁRIOS DE DETECÇÃO
 // ═══════════════════════════════════════════════════════════════════════════
 
-/**
- * Detecta se o dispositivo é mobile
- */
 function isMobileDevice(): boolean {
   if (typeof window === 'undefined') return false
-  
   return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
     navigator.userAgent
   ) || window.innerWidth < 768
@@ -127,9 +122,6 @@ function openDB(): Promise<IDBDatabase> {
 // FUNÇÕES AUXILIARES PARA BACKUP
 // ═══════════════════════════════════════════════════════════════════════════
 
-/**
- * Gera o nome do arquivo de backup com data
- */
 function getBackupFileName(): string {
   const date = new Date()
   const year = date.getFullYear()
@@ -139,101 +131,6 @@ function getBackupFileName(): string {
   const minutes = String(date.getMinutes()).padStart(2, '0')
   
   return `arcana-backup-${year}-${month}-${day}_${hours}-${minutes}.json`
-}
-
-/**
- * Verifica se a Web Share API está disponível
- */
-function canShare(): boolean {
-  if (typeof navigator === 'undefined') return false
-  return !!navigator.share && !!navigator.canShare
-}
-
-/**
- * Download usando método tradicional (funciona na maioria dos navegadores desktop)
- */
-async function downloadViaAnchor(blob: Blob, fileName: string): Promise<boolean> {
-  try {
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement("a")
-    a.href = url
-    a.download = fileName
-    a.style.display = 'none'
-    document.body.appendChild(a)
-    a.click()
-    
-    setTimeout(() => {
-      document.body.removeChild(a)
-      URL.revokeObjectURL(url)
-    }, 100)
-    
-    return true
-  } catch (error) {
-    console.error("Download via anchor failed:", error)
-    return false
-  }
-}
-
-/**
- * Download usando a API de File System Access (navegadores modernos)
- */
-async function downloadViaFileSystem(blob: Blob, fileName: string): Promise<boolean> {
-  try {
-    if (!('showSaveFilePicker' in window)) {
-      return false
-    }
-
-    const handle = await (window as any).showSaveFilePicker({
-      suggestedName: fileName,
-      types: [
-        {
-          description: 'JSON Files',
-          accept: { 'application/json': ['.json'] },
-        },
-      ],
-    })
-
-    const writable = await handle.createWritable()
-    await writable.write(blob)
-    await writable.close()
-    
-    return true
-  } catch (error) {
-    if ((error as Error).name !== 'AbortError') {
-      console.error("File System API failed:", error)
-    }
-    return false
-  }
-}
-
-/**
- * Compartilhar usando Web Share API (ideal para mobile)
- */
-async function shareFile(blob: Blob, fileName: string): Promise<boolean> {
-  try {
-    if (!canShare()) {
-      return false
-    }
-
-    const file = new File([blob], fileName, { type: 'application/json' })
-    
-    if (!navigator.canShare({ files: [file] })) {
-      return false
-    }
-
-    await navigator.share({
-      files: [file],
-      title: 'Arcana Backup',
-      text: 'Backup das suas cartas do Arcana',
-    })
-    
-    return true
-  } catch (error) {
-    if ((error as Error).name !== 'AbortError') {
-      console.error("Share failed:", error)
-    }
-    return false
-  }
 }
 
 // ═══════════════════════════════════════════════════════════════════════════
@@ -365,129 +262,121 @@ export function ArcanaProvider({ children }: { children: ReactNode }) {
   }
 
   // ═════════════════════════════════════════════════════════════════════════
-  // FUNÇÕES DE BACKUP - MELHORADAS PARA MOBILE
+  // FUNÇÕES DE BACKUP — CAPACITOR + NAVEGADOR
   // ═════════════════════════════════════════════════════════════════════════
 
+  /**
+   * Monta o objeto de backup com metadados
+   */
+  const buildBackupData = () => ({
+    _meta: {
+      version: "1.0",
+      exportedAt: new Date().toISOString(),
+      cardCount: cards.length,
+    },
+    cards,
+    settings,
+  })
+
   const getBackupData = (): string => {
-    const backupData = {
-      _meta: {
-        version: "1.0",
-        exportedAt: new Date().toISOString(),
-        cardCount: cards.length,
-      },
-      cards,
-      settings,
-    }
-    return JSON.stringify(backupData, null, 2)
+    return JSON.stringify(buildBackupData(), null, 2)
   }
 
+  /**
+   * ════════════════════════════════════════════════════════════════
+   * 📦 EXPORTAR BACKUP
+   * 
+   * 📱 Capacitor (APK): Filesystem.writeFile → Share nativo
+   * 🖥️ Navegador: Download via anchor tag (blob URL)
+   * 
+   * Usa o file-handler.ts que detecta automaticamente o ambiente
+   * ════════════════════════════════════════════════════════════════
+   */
   const exportData = async (): Promise<BackupResult> => {
     try {
-      const data = getBackupData()
-      const blob = new Blob([data], { type: "application/json" })
-      const fileName = getBackupFileName()
-
-      if (isMobileDevice()) {
-        const shared = await shareFile(blob, fileName)
-        if (shared) {
-          return {
-            success: true,
-            message: "Backup compartilhado com sucesso!",
-            method: "share"
-          }
-        }
-      }
-
-      const savedViaFS = await downloadViaFileSystem(blob, fileName)
-      if (savedViaFS) {
-        return {
-          success: true,
-          message: "Backup salvo com sucesso!",
-          method: "download"
-        }
-      }
-
-      const downloaded = await downloadViaAnchor(blob, fileName)
-      if (downloaded) {
-        return {
-          success: true,
-          message: "Backup baixado com sucesso!",
-          method: "download"
-        }
-      }
-
-      await navigator.clipboard.writeText(data)
+      const data = buildBackupData()
+      const filename = getBackupFileName()
+      const result = await exportJsonFile(data, filename)
+      
       return {
-        success: true,
-        message: "Dados copiados para a área de transferência! Cole em um arquivo .json",
-        method: "clipboard"
+        ...result,
+        method: "download",
       }
-
     } catch (error) {
       console.error("Export failed:", error)
       return {
         success: false,
-        message: "Erro ao exportar dados. Tente novamente."
+        message: "Erro ao exportar dados. Tente novamente.",
       }
     }
   }
 
+  /**
+   * ════════════════════════════════════════════════════════════════
+   * 📤 COMPARTILHAR BACKUP
+   * 
+   * 📱 Capacitor: Filesystem → Share nativo do Android
+   * 🖥️ Navegador: Web Share API (se disponível)
+   * ════════════════════════════════════════════════════════════════
+   */
   const shareBackup = async (): Promise<BackupResult> => {
     try {
-      const data = getBackupData()
-      const blob = new Blob([data], { type: "application/json" })
-      const fileName = getBackupFileName()
+      const data = buildBackupData()
+      const filename = getBackupFileName()
+      const result = await shareJsonFile(data, filename)
 
-      if (!canShare()) {
+      // Se compartilhamento falhou, tenta download como fallback
+      if (!result.success) {
+        const downloadResult = await exportJsonFile(data, filename)
         return {
-          success: false,
-          message: "Compartilhamento não suportado neste navegador"
-        }
-      }
-
-      const shared = await shareFile(blob, fileName)
-      
-      if (shared) {
-        return {
-          success: true,
-          message: "Backup compartilhado com sucesso!",
-          method: "share"
+          ...downloadResult,
+          method: "download",
         }
       }
 
       return {
-        success: false,
-        message: "Não foi possível compartilhar. Tente baixar o arquivo."
+        ...result,
+        method: "share",
       }
-
     } catch (error) {
       console.error("Share failed:", error)
       return {
         success: false,
-        message: "Erro ao compartilhar. Tente novamente."
+        message: "Erro ao compartilhar. Tente novamente.",
       }
     }
   }
 
+  /**
+   * ════════════════════════════════════════════════════════════════
+   * 📋 COPIAR PARA CLIPBOARD
+   * Funciona igual em Capacitor e navegador
+   * ════════════════════════════════════════════════════════════════
+   */
   const copyBackupToClipboard = async (): Promise<BackupResult> => {
     try {
-      const data = getBackupData()
-      await navigator.clipboard.writeText(data)
-      
+      const data = buildBackupData()
+      const result = await copyJsonToClipboard(data)
+
       return {
-        success: true,
-        message: "Backup copiado! Cole em um arquivo .json para salvar.",
-        method: "clipboard"
+        ...result,
+        method: "clipboard",
       }
     } catch (error) {
       console.error("Copy to clipboard failed:", error)
       return {
         success: false,
-        message: "Erro ao copiar. Verifique as permissões do navegador."
+        message: "Erro ao copiar. Verifique as permissões.",
       }
     }
   }
 
+  /**
+   * ════════════════════════════════════════════════════════════════
+   * 📥 IMPORTAR BACKUP
+   * Funciona igual em ambos (o FileReader do input lê o arquivo)
+   * ════════════════════════════════════════════════════════════════
+   */
   const importData = async (data: string): Promise<BackupResult> => {
     try {
       const parsed = JSON.parse(data)
@@ -495,7 +384,7 @@ export function ArcanaProvider({ children }: { children: ReactNode }) {
       if (!parsed.cards && !parsed.settings) {
         return {
           success: false,
-          message: "Arquivo inválido. Não contém dados do Arcana."
+          message: "Arquivo inválido. Não contém dados do Arcana.",
         }
       }
 
@@ -523,22 +412,21 @@ export function ArcanaProvider({ children }: { children: ReactNode }) {
 
       return {
         success: true,
-        message: `Backup restaurado! ${importedCount} carta${importedCount !== 1 ? 's' : ''} importada${importedCount !== 1 ? 's' : ''}.`
+        message: `Backup restaurado! ${importedCount} carta${importedCount !== 1 ? 's' : ''} importada${importedCount !== 1 ? 's' : ''}.`,
       }
-
     } catch (error) {
       console.error("Import failed:", error)
       
       if (error instanceof SyntaxError) {
         return {
           success: false,
-          message: "Arquivo corrompido ou formato inválido."
+          message: "Arquivo corrompido ou formato inválido.",
         }
       }
 
       return {
         success: false,
-        message: "Erro ao importar dados. Verifique o arquivo."
+        message: "Erro ao importar dados. Verifique o arquivo.",
       }
     }
   }
