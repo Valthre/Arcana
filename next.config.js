@@ -1,15 +1,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    turbopack: {
-      // This is the fix for the Turbopack build error
-      root: __dirname,
-    },
-    // This is the fix for the cross-origin warning
-    allowedDevOrigins: [
-      'https://*.cloudworkstations.dev',
-    ],
+  // OBRIGATÓRIO PARA CAPACITOR (Gera a pasta /out)
+  output: 'export',
+
+  // OBRIGATÓRIO PARA EXPORTAÇÃO ESTÁTICA
+  images: {
+    unoptimized: true
   },
+
+  // Corrige o aviso de Cross-Origin no ambiente de desenvolvimento
+  allowedDevOrigins: [
+    'https://*.cloudworkstations.dev'
+  ]
 };
 
 module.exports = nextConfig;
