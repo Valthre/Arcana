@@ -1,6 +1,6 @@
 {
   "name": "arcana-app",
-  "version": "0.3.1-beta",
+  "version": "0.3.2-beta",
   "private": true,
   "scripts": {
     "build": "next build",
@@ -16,7 +16,7 @@
     "@capacitor/filesystem": "^8.1.2",
     "@capacitor/share": "^8.0.1",
     "@capacitor/splash-screen": "^8.0.1",
-    "@hookform/resolvers": "^3.10.0",
+    "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "1.2.2",
     "@radix-ui/react-alert-dialog": "1.1.4",
     "@radix-ui/react-aspect-ratio": "1.1.1",
@@ -64,7 +64,7 @@
     "tailwind-merge": "^3.3.1",
     "tailwindcss-animate": "^1.0.7",
     "vaul": "^1.1.2",
-    "zod": "3.25.76"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@capacitor/cli": "^8.1.0",
