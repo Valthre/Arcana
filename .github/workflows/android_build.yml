@@ -41,12 +41,15 @@ jobs:
           fi
           npx cap sync android
           
-          # ATUALIZA A VERSÃO NO ANDROID
           VERSION="${{ steps.get_version.outputs.versao }}"
-          # Muda o versionName para o que está no package.json
           sed -i "s/versionName \".*\"/versionName \"$VERSION\"/" android/app/build.gradle
-          # Muda o versionCode para o número do build do GitHub (número inteiro sempre crescente)
           sed -i "s/versionCode [0-9]*/versionCode ${{ github.run_number }}/" android/app/build.gradle
+
+      - name: Corrigir Sobreposição (Edge-to-Edge) no Android
+        run: |
+          MAIN_ACTIVITY="android/app/src/main/java/com/stylesai/arcana/MainActivity.java"
+          sed -i '/import com.getcapacitor.BridgeActivity;/a import android.os.Bundle;' $MAIN_ACTIVITY
+          sed -i '/public class MainActivity extends BridgeActivity {/a \    @Override\n    public void onCreate(Bundle savedInstanceState) {\n        super.onCreate(savedInstanceState);\n        this.bridge.getWebView().setFitsSystemWindows(true);\n    }' $MAIN_ACTIVITY
 
       - name: Gerar Ícones e Splash
         run: |
