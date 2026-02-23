@@ -49,16 +49,17 @@ We are working on the integration with **DML - Dense Models Language** for:
 This project is under the **MIT License**. Feel free to use, modify, and expand it however you prefer.
 
 ## 💜 Credits
-* **Idealization and Product Direction:** [Eduardo00082](https://github.com/Eduardo00082)
-  *(Responsible for the project vision, features, final design review, and product).*
+* **Concept, Product Direction and Internal Infrastructure Review:** [Eduardo00082](https://github.com/Eduardo00082)
+ *(Responsible for the project vision, functionalities, final design review, product and project infrastructure management).*
 
 * **Visual Concept and Design (UI/UX):** Luna (AI - Gemini)
-  *(Creation of the visual identity and user experience).*
+ *(Creation of visual identity and user experience).*
 
 * **Development and Engineering:**
-  * **Claude Opus:** Logic refinement and polishing of main functions.
-  * **v0.app:** Initial structure and project prototyping.
-  * **GitHub Copilot:** Technical review, architecture cleanup, and optimization.
+ * **Claude Opus:** Logic refinement and polishing of main functions.
+ * **v0.app:** Initial project structure and prototyping.
+ * **GitHub Copilot:** Technical review, architecture cleanup and optimization.
+ * **Gemini (Firebase Studio):** Security audit, dependency management and advanced terminal operations.
 
 ---
 ## 📖 About the Project

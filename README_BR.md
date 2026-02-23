@@ -45,8 +45,8 @@ Estamos trabalhando na integração com **DML - Dense Models Language (Modelos d
 Este projeto está sob a **Licença MIT**. Sinta-se à vontade para usar, modificar e expandir do jeito que preferir.
 
 ## 💜 Créditos
-* **Idealização e Direção de Produto:** [Eduardo00082](https://github.com/Eduardo00082)
-  *(Responsável pela visão do projeto, funcionalidades, revisão final de design e produto).*
+* **Idealização, Direção de Produto e Revisão da infraestrutura interna:** [Eduardo00082](https://github.com/Eduardo00082)
+  *(Responsável pela visão do projeto, funcionalidades, revisão final de design, produto e gerenciamento da infraestrutura do projeto).*
 
 * **Conceito Visual e Design (UI/UX):** Luna (IA - Gemini)
   *(Criação da identidade visual e experiência do usuário).*
@@ -54,7 +54,8 @@ Este projeto está sob a **Licença MIT**. Sinta-se à vontade para usar, modifi
 * **Desenvolvimento e Engenharia:**
   * **Claude Opus:** Refinamento de lógica e polimento das funções principais.
   * **v0.app:** Estrutura e prototipagem inicial do projeto.
-  * **GitHub Copilot:** Revisão técnica, limpeza de arquitetura e otimização.
+  * **GitHub Copilot:** Revisão técnica, limpeza de arquitetura e otimização .
+  * **Gemini (Firebase Studio):** Auditoria de segurança, gerenciamento de dependências e operações avançadas via terminal.
 
 ---
 ## 📖 Sobre o Projeto

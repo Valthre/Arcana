@@ -22,7 +22,7 @@ A clear and concise description of what you expected to happen.
 **Environment Information:**
  - Device: (e.g. iPhone 13, PC)
  - OS: (e.g. Android 14, Windows 11)
- - App Version: (e.g. v0.3.0-beta)
+ - App Version: (e.g. v0.3.3-beta)
  - Browser/Platform: (e.g. Chrome, APK)
 
 **Additional context**

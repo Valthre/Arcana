@@ -1,6 +1,6 @@
 {
   "name": "arcana-app",
-  "version": "0.3.2-beta",
+  "version": "0.3.3-beta",
   "private": true,
   "scripts": {
     "build": "next build",
