@@ -40,16 +40,10 @@ jobs:
             npx cap add android
           fi
           npx cap sync android
-          
+
           VERSION="${{ steps.get_version.outputs.versao }}"
           sed -i "s/versionName \".*\"/versionName \"$VERSION\"/" android/app/build.gradle
           sed -i "s/versionCode [0-9]*/versionCode ${{ github.run_number }}/" android/app/build.gradle
-
-      - name: Corrigir Sobreposição (Edge-to-Edge) no Android
-        run: |
-          MAIN_ACTIVITY="android/app/src/main/java/com/stylesai/arcana/MainActivity.java"
-          sed -i '/import com.getcapacitor.BridgeActivity;/a import android.os.Bundle;' $MAIN_ACTIVITY
-          sed -i '/public class MainActivity extends BridgeActivity {/a \    @Override\n    public void onCreate(Bundle savedInstanceState) {\n        super.onCreate(savedInstanceState);\n        this.bridge.getWebView().setFitsSystemWindows(true);\n    }' $MAIN_ACTIVITY
 
       - name: Gerar Ícones e Splash
         run: |
@@ -58,7 +52,32 @@ jobs:
           cp public/images/icon.png assets/icon.png || true
           cp public/images/logo-do-app.png assets/splash.png || true
           npx capacitor-assets generate --android
+          # ▼▼▼ ÚLTIMO sync — depois disso ninguém mais sobrescreve ▼▼▼
           npx cap sync android
+
+      # ▼▼▼ AGORA sim, depois do último sync ▼▼▼
+      - name: Corrigir Sobreposição (Edge-to-Edge) no Android
+        run: |
+          MAIN_ACTIVITY="android/app/src/main/java/com/stylesai/arcana/MainActivity.java"
+
+          # Reescreve o arquivo inteiro de forma controlada (heredoc)
+          cat > "$MAIN_ACTIVITY" << 'JAVA'
+          package com.stylesai.arcana;
+
+          import android.os.Bundle;
+          import com.getcapacitor.BridgeActivity;
+
+          public class MainActivity extends BridgeActivity {
+              @Override
+              public void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  this.bridge.getWebView().setFitsSystemWindows(true);
+              }
+          }
+          JAVA
+
+          echo "--- MainActivity.java final ---"
+          cat "$MAIN_ACTIVITY"
 
       - name: Compilar APK (Release)
         run: |
@@ -68,22 +87,22 @@ jobs:
         id: sign_app
         run: |
           BUILD_TOOLS_PATH=$(ls -d ${ANDROID_SDK_ROOT}/build-tools/* | tail -1)
-          
+
           UNSIGNED_APK="android/app/build/outputs/apk/release/app-release-unsigned.apk"
           ALIGNED_APK="Arcana-aligned.apk"
           SIGNED_APK="Arcana-v${{ steps.get_version.outputs.versao }}.apk"
-          
+
           echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > release.keystore
-          
+
           $BUILD_TOOLS_PATH/zipalign -v 4 "$UNSIGNED_APK" "$ALIGNED_APK"
-          
+
           $BUILD_TOOLS_PATH/apksigner sign --ks release.keystore \
             --ks-key-alias "${{ secrets.ANDROID_KEY_ALIAS }}" \
             --ks-pass pass:"${{ secrets.ANDROID_KEYSTORE_PASSWORD }}" \
             --key-pass pass:"${{ secrets.ANDROID_KEY_PASSWORD }}" \
             --out "$SIGNED_APK" \
             "$ALIGNED_APK"
-          
+
           echo "signed_file=$SIGNED_APK" >> $GITHUB_OUTPUT
           rm release.keystore
 
