@@ -134,7 +134,7 @@ export function CreateCardModal({ onClose }: CreateCardModalProps) {
           />
 
           {/* Header */}
-          <div className="relative flex flex-shrink-0 items-center gap-4 border-b border-white/5 p-6">
+          <div className="relative flex shrink-0 items-center gap-4 border-b border-white/5 p-6">
             {/* Icon with glow */}
             <div 
               className="flex h-12 w-12 items-center justify-center rounded-2xl"

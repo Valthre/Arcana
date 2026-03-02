@@ -62,8 +62,13 @@ export function Sidebar({ activeView, onViewChange, onSettingsClick }: SidebarPr
           📱 MOBILE: HEADER FIXO NO TOPO
           Só aparece em telas < 768px (md)
       ══════════════════════════════════════════════════════════════ */}
-      <div className="flex h-14 w-full items-center justify-between border-b border-arcana-purple/20 bg-arcana-dark/60 px-4 backdrop-blur-md md:hidden">
-        
+      <div 
+  className="flex h-14 w-full items-center justify-between border-b border-arcana-purple/20 bg-arcana-dark/60 px-4 backdrop-blur-md md:hidden"
+  style={{
+    // 📱 Safe area: respeita status bar
+    paddingTop: "env(safe-area-inset-top, 0px)",
+  }}
+>        
         {/* Botão Hambúrguer */}
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -94,19 +99,22 @@ export function Sidebar({ activeView, onViewChange, onSettingsClick }: SidebarPr
         onClick={() => setIsMobileMenuOpen(false)}
       />
 
-      {/* ══════════════════════════════════════════════════════════════
-          📱 MOBILE: MENU DESLIZANTE (da esquerda)
-      ══════════════════════════════════════════════════════════════ */}
-      <div 
-        className={`fixed left-0 top-0 z-50 flex h-full w-56 flex-col border-r border-arcana-purple/30 bg-arcana-dark/95 backdrop-blur-xl transition-transform duration-300 ease-out md:hidden ${
-          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-        }`}
-        style={{
-          boxShadow: isMobileMenuOpen 
-            ? `4px 0 ${30 * neonIntensity}px rgba(147, 51, 234, ${0.2 * neonIntensity})`
-            : "none"
-        }}
-      >
+{/* ══════════════════════════════════════════════════════════════
+    📱 MOBILE: MENU DESLIZANTE (da esquerda)
+══════════════════════════════════════════════════════════════ */}
+<div 
+  className={`fixed left-0 top-0 z-50 flex h-full w-56 flex-col border-r border-arcana-purple/30 bg-arcana-dark/95 backdrop-blur-xl transition-transform duration-300 ease-out md:hidden ${
+    isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+  }`}
+  style={{
+    // 📱 Safe area: respeita status bar e barra de navegação
+    paddingTop: "env(safe-area-inset-top, 0px)",
+    paddingBottom: "env(safe-area-inset-bottom, 0px)",
+    boxShadow: isMobileMenuOpen 
+      ? `4px 0 ${30 * neonIntensity}px rgba(147, 51, 234, ${0.2 * neonIntensity})`
+      : "none"
+  }}
+>
         {/* Header do Menu Mobile */}
         <div className="flex items-center justify-between border-b border-arcana-purple/20 p-4">
           <div className="flex items-center gap-3">
@@ -199,7 +207,7 @@ export function Sidebar({ activeView, onViewChange, onSettingsClick }: SidebarPr
       </div>
 
       {/* ══════════════════════════════════════════════════════════════
-          🖥️ DESKTOP: SIDEBAR FIXA (igual antes, mas refinada)
+          🖥️ DESKTOP: SIDEBAR FIXA
           Só aparece em telas >= 768px (md)
       ══════════════════════════════════════════════════════════════ */}
       <aside 

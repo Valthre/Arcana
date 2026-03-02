@@ -86,7 +86,7 @@ export default function WelcomePage() {
         />
       ) : (
         <div 
-          className={`pointer-events-none fixed inset-0 z-50 bg-gradient-to-br from-purple-600 via-pink-500 to-cyan-500 transition-opacity duration-500 ${
+          className={`pointer-events-none fixed inset-0 z-50 bg-linear-to-br from-purple-600 via-pink-500 to-cyan-500 transition-opacity duration-500 ${
             isExiting ? "opacity-100" : "opacity-0"
           }`}
           style={{ mixBlendMode: "screen" }}
@@ -146,7 +146,7 @@ export default function WelcomePage() {
         >
           <div className="relative h-[16vh] w-[16vh] min-h-[80px] min-w-[80px] md:h-28 md:w-28 lg:h-32 lg:w-32">
             <div 
-              className={`absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-600 to-pink-600 opacity-50 md:rounded-3xl ${
+              className={`absolute inset-0 rounded-2xl bg-linear-to-br from-purple-600 to-pink-600 opacity-50 md:rounded-3xl ${
                 isMobile ? "blur-xl" : "blur-2xl animate-pulse"
               }`} 
             />
@@ -337,7 +337,7 @@ export default function WelcomePage() {
             {/* Shine effect - Só em desktop */}
             {!isMobile && (
               <div
-                className="absolute inset-0 translate-x-[-100%] opacity-50 transition-transform duration-1000 group-hover:translate-x-[100%]"
+                className="absolute inset-0 -translate-x-full opacity-50 transition-transform duration-1000 group-hover:translate-x-full"
                 style={{ background: "linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent)" }}
               />
             )}

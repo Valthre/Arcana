@@ -8,6 +8,16 @@
    ============================================ */
 
 :root {
+  /* ============================================
+     📱 SAFE AREA - Android 15/16 Edge-to-Edge
+     O plugin @capacitor-community/safe-area popula
+     os valores env() automaticamente
+     ============================================ */
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+
   /* Base Colors - Tailwind Defaults */
   --background: oklch(0.05 0.02 280);
   --foreground: oklch(0.95 0.01 280);
@@ -152,22 +162,25 @@
 
 @layer base {
   html {
-    /* Base padrão para Desktop */
     font-size: 16px; 
     scroll-behavior: smooth;
     -webkit-font-smoothing: antialiased;
   }
 
-  /* 📱 Para celulares (telas menores que 768px) */
+  /* 📱 SAFE AREA aplicado no body */
+  body {
+    padding-top: var(--safe-area-top);
+    padding-bottom: var(--safe-area-bottom);
+    padding-left: var(--safe-area-left);
+    padding-right: var(--safe-area-right);
+  }
+
   @media (max-width: 768px) {
     html {
-      /* Isso reduz TUDO que usa 'rem' (paddings, margins, fonts, heights) */
-      /* 16px * 0.85 = 13.6px */
       font-size: 12px; 
     }
   }
 
-  /* 🖥️ Para telas MUITO grandes (opcional, estilo TV ou UltraWide) */
   @media (min-width: 1536px) {
     html {
       font-size: 18px; 
@@ -214,7 +227,6 @@
   background-clip: padding-box;
 }
 
-/* Scrollbar Corner */
 ::-webkit-scrollbar-corner {
   background: transparent;
 }
@@ -223,12 +235,10 @@
    🎭 ANIMATIONS & TRANSITIONS
    ============================================ */
 
-/* Smooth transitions by default */
 * {
   transition-timing-function: var(--ease-out);
 }
 
-/* Reduce motion for accessibility */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -240,7 +250,6 @@
   }
 }
 
-/* Custom Animations */
 @keyframes glow-pulse {
   0%, 100% {
     box-shadow: var(--glow-purple);
@@ -317,7 +326,6 @@
    ============================================ */
 
 @layer utilities {
-  /* Glass morphism */
   .glass {
     background: var(--arcana-glass);
     backdrop-filter: blur(20px);
@@ -325,7 +333,6 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  /* Neon glow effects */
   .glow-purple {
     box-shadow: var(--glow-purple);
   }
@@ -338,7 +345,6 @@
     box-shadow: var(--glow-cyan);
   }
 
-  /* Text glow */
   .text-glow-purple {
     text-shadow: 0 0 20px rgba(147, 51, 234, 0.8);
   }
@@ -351,7 +357,6 @@
     text-shadow: 0 0 20px rgba(34, 211, 238, 0.8);
   }
 
-  /* Gradient text */
   .gradient-text {
     background: linear-gradient(135deg, #d946ef 0%, #a855f7 50%, #22d3ee 100%);
     -webkit-background-clip: text;
@@ -359,7 +364,6 @@
     background-clip: text;
   }
 
-  /* Hide scrollbar */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
@@ -369,7 +373,6 @@
     scrollbar-width: none;
   }
 
-  /* Custom focus ring */
   .focus-ring {
     @apply outline-none ring-2 ring-arcana-purple ring-offset-2 ring-offset-arcana-bg;
   }
@@ -387,7 +390,6 @@
   line-height: 1.6;
 }
 
-/* Keywords & Built-ins */
 .hljs-keyword,
 .hljs-selector-tag,
 .hljs-built_in,
@@ -397,7 +399,6 @@
   font-weight: 500;
 }
 
-/* Strings & Attributes */
 .hljs-string,
 .hljs-attr,
 .hljs-quote,
@@ -405,14 +406,12 @@
   color: #98c379;
 }
 
-/* Numbers & Literals */
 .hljs-number,
 .hljs-literal,
 .hljs-regexp {
   color: #d19a66;
 }
 
-/* Comments */
 .hljs-comment,
 .hljs-meta {
   color: #5c6370;
@@ -420,7 +419,6 @@
   opacity: 0.8;
 }
 
-/* Functions & Titles */
 .hljs-function,
 .hljs-title,
 .hljs-section,
@@ -429,28 +427,24 @@
   font-weight: 500;
 }
 
-/* Variables & Parameters */
 .hljs-variable,
 .hljs-params,
 .hljs-template-variable {
   color: #e06c75;
 }
 
-/* Types & Classes */
 .hljs-type,
 .hljs-class,
 .hljs-built_in {
   color: #e5c07b;
 }
 
-/* Operators & Symbols */
 .hljs-operator,
 .hljs-symbol,
 .hljs-bullet {
   color: #56b6c2;
 }
 
-/* Deleted & Inserted (for diffs) */
 .hljs-deletion {
   color: #e06c75;
   background-color: rgba(224, 108, 117, 0.1);
@@ -461,7 +455,6 @@
   background-color: rgba(152, 195, 121, 0.1);
 }
 
-/* Emphasis */
 .hljs-emphasis {
   font-style: italic;
 }
@@ -470,7 +463,6 @@
   font-weight: bold;
 }
 
-/* Links */
 .hljs-link {
   color: #61afef;
   text-decoration: underline;
@@ -480,7 +472,6 @@
    🎨 COMPONENT SPECIFIC STYLES
    ============================================ */
 
-/* Card hover effect */
 .card-hover {
   transition: all var(--transition-normal) var(--ease-out);
 }
@@ -490,12 +481,10 @@
   box-shadow: 0 0 30px rgba(147, 51, 234, 0.3);
 }
 
-/* Button pulse animation */
 .btn-pulse {
   animation: glow-pulse 2s ease-in-out infinite;
 }
 
-/* Loading spinner */
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -506,7 +495,6 @@
   animation: spin 1s linear infinite;
 }
 
-/* Skeleton loader */
 @keyframes skeleton-loading {
   0% {
     background-position: -200px 0;
@@ -537,7 +525,6 @@
   }
 }
 
-/* Touch device optimizations */
 @media (hover: none) and (pointer: coarse) {
   .card-hover:hover {
     transform: none;
@@ -549,7 +536,6 @@
   }
 }
 
-/* Print styles */
 @media print {
   body {
     background: white !important;

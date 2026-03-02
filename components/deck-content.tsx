@@ -539,29 +539,30 @@ export function DeckContent() {
         </main>
       </div>
 
-      {/* ➕ FAB: BOTÃO FLUTUANTE "NOVA CARTA" */}
-      {activeView === "deck" && (
-        <button
-          onClick={() => setIsCreateModalOpen(true)}
-          className={`group fixed bottom-4 right-4 z-50 flex h-14 w-14 items-center justify-center rounded-2xl transition-all ${
-            shouldReduceEffects ? "duration-150" : "duration-300"
-          } hover:scale-110 hover:-translate-y-1 active:scale-95 md:bottom-8 md:right-8 md:h-16 md:w-16`}
-          style={{
-            background: "linear-gradient(135deg, rgba(147, 51, 234, 0.9), rgba(236, 72, 153, 0.8))",
-            border: "1px solid rgba(255, 255, 255, 0.2)",
-            // 📱 Shadow simplificado em mobile
-            boxShadow: shouldReduceEffects
-              ? `0 4px 15px rgba(0, 0, 0, 0.3), 0 0 ${20 * neonIntensity}px rgba(147, 51, 234, ${0.4 * neonIntensity})`
-              : `
-                  0 4px 20px rgba(0, 0, 0, 0.4),
-                  0 0 ${35 * neonIntensity}px rgba(147, 51, 234, ${0.6 * neonIntensity}),
-                  inset 0 1px 0 rgba(255, 255, 255, 0.2)
-                `,
-          }}
-        >
-          <Plus className={`h-7 w-7 text-white transition-transform ${
-            shouldReduceEffects ? "duration-150" : "duration-300"
-          } group-hover:rotate-90 md:h-8 md:w-8`} />
+{/* ➕ FAB: BOTÃO FLUTUANTE "NOVA CARTA" */}
+{activeView === "deck" && (
+  <button
+    onClick={() => setIsCreateModalOpen(true)}
+    className={`group fixed right-4 z-50 flex h-14 w-14 items-center justify-center rounded-2xl transition-all ${
+      shouldReduceEffects ? "duration-150" : "duration-300"
+    } hover:scale-110 hover:-translate-y-1 active:scale-95 md:bottom-8 md:right-8 md:h-16 md:w-16`}
+    style={{
+      // 📱 Safe area: bottom-4 (1rem) + safe area inset
+      bottom: "calc(env(safe-area-inset-bottom, 0px) + 1rem)",
+      background: "linear-gradient(135deg, rgba(147, 51, 234, 0.9), rgba(236, 72, 153, 0.8))",
+      border: "1px solid rgba(255, 255, 255, 0.2)",
+      boxShadow: shouldReduceEffects
+        ? `0 4px 15px rgba(0, 0, 0, 0.3), 0 0 ${20 * neonIntensity}px rgba(147, 51, 234, ${0.4 * neonIntensity})`
+        : `
+            0 4px 20px rgba(0, 0, 0, 0.4),
+            0 0 ${35 * neonIntensity}px rgba(147, 51, 234, ${0.6 * neonIntensity}),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2)
+          `,
+    }}
+  >
+    <Plus className={`h-7 w-7 text-white transition-transform ${
+      shouldReduceEffects ? "duration-150" : "duration-300"
+    } group-hover:rotate-90 md:h-8 md:w-8`} />
           
           {/* 🖥️ Tooltip "Nova Carta" - Só em desktop */}
           {!isMobile && (
