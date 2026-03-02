@@ -1,7 +1,7 @@
 <div align="center">
   <img src="./public/images/logo-do-app.jpg" alt="Arcana Logo" width="250" style="border-radius: 20px;">
 
-# Sua Biblioteca de Códigos!
+# Sua Biblioteca Local!
 </div>
 
 O **Arcana** é um ambiente imersivo e privado projetado para desenvolvedores e Prompt Engineers que buscam organizar seu trabalho (snippets, lógicas e prompts) com segurança absoluta. Diferente de outras ferramentas, o Arcana é **100% Offline-First**, garantindo que seus dados nunca saiam do seu dispositivo.
@@ -61,7 +61,7 @@ Este projeto está sob a **Licença MIT**. Sinta-se à vontade para usar, modifi
 ## 📖 Sobre o Projeto
 O Arcana nasceu da vontade de criar um app próprio, e que possa ser útil para as pessoas.
 
-Desenvolvido inteiramente através de um setup híbrido, usando um **Chromebook** para codificação + **GitHub Codespace** e um **celular** para testes reaais, esse projeto é o resultado de uma colaboração intensa entre humano e a inteligência artificial.
+Desenvolvido inteiramente através de um setup híbrido, usando um **Chromebook** para codificação + **GitHub Codespace/Firebase Studio** e um **celular** para testes reais, esse projeto é o resultado de uma colaboração intensa entre humano e a inteligência artificial.
 
 Acredito que o papel do desenvolvedor está evoluindo para algo que nunca achei que pudesse: Eu, uma pessoa comum e entusiasita de tecnologia, que antes não acreditava que poderia, ao menos uma fração, ser igual aos desenvolvedores que se dedicam a criar seus apps. Pra mim, isso é arte. E eu valorizo isso. Não estou falando que usar IA me faça ser parte dessa comunidade de artistas. Talvez nunca vou. Mas isso não indica de que eu também não tenho a criatividade humana só por usar IA. Eu também quero a sensação de criar algo.
 

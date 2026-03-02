@@ -4,7 +4,7 @@
 <div align="center">
   <img src="./public/images/logo-do-app.jpg" alt="Arcana Logo" width="250" style="border-radius: 20px;">
 
-# Your Code Library!
+# Your Local Library!
 </div>
 
 **Arcana** is an immersive and private environment designed for developers and Prompt Engineers looking to organize their work (snippets, logic, and prompts) with absolute security. Unlike other tools, Arcana is **100% Offline-First**, ensuring your data never leaves your device.
@@ -65,7 +65,7 @@ This project is under the **MIT License**. Feel free to use, modify, and expand 
 ## 📖 About the Project
 Arcana was born from the desire to create my own app, and that it could be useful for people.
 
-Developed entirely through a hybrid setup, using a **Chromebook** for coding + **GitHub Codespaces** and a **cell phone** for real-world tests, this project is the result of an intense collaboration between human and artificial intelligence.
+Developed entirely through a hybrid setup, using a **Chromebook** for coding + **GitHub Codespaces/Firebase Studio** and a **cell phone** for real-world tests, this project is the result of an intense collaboration between human and artificial intelligence.
 
 I believe that the role of the developer is evolving into something I never thought it could: Me, an ordinary person and technology enthusiast, who before didn't believe I could be, at least a fraction, equal to the developers who dedicate themselves to creating their apps. To me, this is art. And I value that. I'm not saying that using AI makes me part of this community of artists. Maybe I never will be. But that doesn't indicate that I also don't have human creativity just because I use AI. I also want the feeling of creating something.
 
