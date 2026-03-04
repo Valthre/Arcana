@@ -34,8 +34,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="pt-BR">
-      <body className="font-sans antialiased" suppressHydrationWarning>
+    <html lang="pt-BR" className="h-full overflow-hidden">
+      <body className="h-full overflow-hidden font-sans antialiased" suppressHydrationWarning>
         <ArcanaProvider>{children}</ArcanaProvider>
       </body>
     </html>

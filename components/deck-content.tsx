@@ -280,10 +280,10 @@ export function DeckContent() {
               </p>
               
               <div className="mb-8 inline-flex items-center gap-2 rounded-full px-4 py-1.5" style={{
-                background: "rgba(147, 51, 234, 0.15)",
-                border: "1px solid rgba(147, 51, 234, 0.3)"
+                background: "rgba(34, 211, 238, 0.15)",
+                border: "1px solid rgba(34, 211, 238, 0.3)"
               }}>
-                <span className="text-xs font-medium text-arcana-purple">v0.3.3-beta</span>
+                <span className="text-xs font-medium text-arcana-cyan">v0.3.4</span>
               </div>
               
               <p className="mb-10 text-base leading-relaxed text-gray-400 md:text-lg">
@@ -382,20 +382,20 @@ export function DeckContent() {
   }
 
   return (
-    <div className="relative h-screen overflow-hidden bg-black">
+    <div className="relative h-dvh overflow-hidden bg-black">
       <Starfield />
 
-      <div className="relative z-10 flex h-screen flex-col md:flex-row">
+      <div className="relative z-10 flex h-full min-h-0 flex-col md:flex-row">
         <Sidebar 
           activeView={activeView} 
           onViewChange={setActiveView} 
           onSettingsClick={() => setIsSettingsOpen(true)} 
         />
 
-        <main className="flex-1 overflow-hidden p-1 md:p-3">
+        <main className="min-h-0 flex-1 overflow-hidden p-1 md:p-3">
           {/* 📦 PAINEL PRINCIPAL */}
           <div
-            className="relative flex h-full flex-col overflow-hidden rounded-2xl md:rounded-3xl"
+            className="relative flex h-full min-h-0 flex-col overflow-hidden rounded-2xl md:rounded-3xl"
             style={{
               border: "2px solid rgba(147, 51, 234, 0.25)",
               background: "rgba(5, 0, 15, 0.3)",
@@ -513,7 +513,7 @@ export function DeckContent() {
 
             {/* 📦 ÁREA DE CONTEÚDO PRINCIPAL */}
             <div 
-              className={`flex-1 overflow-y-auto overflow-x-hidden p-2 transition-all md:p-6 ${
+              className={`min-h-0 flex-1 overflow-y-auto overflow-x-hidden p-2 transition-all md:p-6 ${
                 showContent 
                   ? `translate-y-0 opacity-100 ${shouldReduceEffects ? "duration-200" : "duration-400"} ease-out` 
                   : `-translate-y-2 opacity-0 ${shouldReduceEffects ? "duration-100" : "duration-250"} ease-in`
