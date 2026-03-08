@@ -1,37 +1,53 @@
-import type React from "react"
-import type { Metadata, Viewport } from "next"
-import { Geist, Geist_Mono } from "next/font/google"
-import { ArcanaProvider } from "@/contexts/arcana-context"
-import "./globals.css"
-
-const _geist = Geist({ subsets: ["latin"] })
-const _geistMono = Geist_Mono({ subsets: ["latin"] })
+import type { Metadata, Viewport } from "next";
+import { ArcanaProvider } from "@/contexts/arcana-context";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ARCANA - Sua Biblioteca Local",
-  description: "Gerencie seus snippets e fragmentos de código de forma local e privada",
-  icons: {
-    icon: [
+  title: "ARCANA | Um lugar seguro para seus códigos, sendo 100% privado!",
+  description: "Salve seus prompts e fragmentos de código com total privacidade. Um app Open Source!",
+  keywords: ["Código", "Open Source", "Prompts", "Segurança", "Programação", "Produtividade", "Offline-first", "Privacidade", "Arcana App", "Dev Tools", "Notes"],
+  authors: [{ name: "Valthre", url: "https://github.com/Valthre" }],
+  manifest: "/manifest.json",
+  verification: {
+    google: "kz4Auk5ae1tiNiRKB8R7hvG7uWNG1h2N1AXub_2a1Sc",
+  },
+  openGraph: {
+    title: "ARCANA - Sua Biblioteca Local",
+    description: "Privacidade e controle sobre seus códigos.",
+    url: "https://arcana-ruddy.vercel.app",
+    siteName: "Arcana",
+    images: [
       {
-        url: "/images/icon.png",
-        type: "image/png",
+        url: "/images/logo-do-app.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Arcana Logo",
       },
     ],
-    apple: "/images/logo-do-app.jpg",
+    locale: "pt_BR",
+    type: "website",
   },
-}
+  icons: {
+    icon: "/images/icon (512px).png",
+    apple: "/images/icon (512px).png",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 export const viewport: Viewport = {
-  themeColor: "#050008",
+  themeColor: "#0c0a1f",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-}
+};
 
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="pt-BR" className="h-full overflow-hidden">
@@ -39,5 +55,5 @@ export default function RootLayout({
         <ArcanaProvider>{children}</ArcanaProvider>
       </body>
     </html>
-  )
+  );
 }

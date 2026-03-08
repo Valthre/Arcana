@@ -220,7 +220,7 @@ export function DeckContent() {
                   }}
                 />
                 <img 
-                  src="/images/icon.png" 
+                  src="/images/icon (512px).png" 
                   alt="Arcana Logo" 
                   className={`relative h-40 w-40 rounded-3xl object-cover ${
                     shouldReduceEffects ? "" : "transition-transform duration-300 hover:scale-105"

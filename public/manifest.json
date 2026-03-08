@@ -1,0 +1,23 @@
+{
+  "name": "Arcana",
+  "short_name": "Arcana",
+  "description": "Salve seus prompts e fragmentos de código com total privacidade. Um app Open Source!",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#08071B",
+  "theme_color": "#0c0a1f",
+  "icons": [
+    {
+      "src": "/images/icon (512px).png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/images/icon (512px).png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}

@@ -151,7 +151,7 @@ export default function WelcomePage() {
               }`} 
             />
             <img 
-              src="/images/icon.png"
+              src="/images/icon (512px).png"
               alt="Arcana Logo"
               className="relative h-full w-full rounded-2xl border-2 border-purple-500/50 object-cover shadow-lg md:rounded-3xl"
               style={{ 

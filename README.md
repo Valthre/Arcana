@@ -5,7 +5,7 @@
   <img src="./public/images/logo-do-app.jpg" alt="Arcana Logo" width="250" style="border-radius: 20px;">
 
 # Your Local Library!
-</div>
+</div>+
 
 **Arcana** is an immersive and private environment designed for developers and Prompt Engineers looking to organize their work (snippets, logic, and prompts) with absolute security. Unlike other tools, Arcana is **100% Offline-First**, ensuring your data never leaves your device.
 
