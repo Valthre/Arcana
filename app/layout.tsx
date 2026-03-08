@@ -3,9 +3,9 @@ import { ArcanaProvider } from "@/contexts/arcana-context";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ARCANA | Um lugar seguro para seus códigos, sendo 100% privado!",
+  title: "ARCANA - Sua Biblioteca Local",
   description: "Salve seus prompts e fragmentos de código com total privacidade. Um app Open Source!",
-  keywords: ["Código", "Open Source", "Prompts", "Segurança", "Programação", "Produtividade", "Offline-first", "Privacidade", "Arcana App", "Dev Tools", "Notes"],
+  keywords: ["Código", "Open Source", "Prompts", "Segurança", "Programação", "Produtividade", "Offline-first", "Privacidade", "Arcana App", "Dev Tools", "Notes", "Anotações"],
   authors: [{ name: "Valthre", url: "https://github.com/Valthre" }],
   manifest: "/manifest.json",
   verification: {

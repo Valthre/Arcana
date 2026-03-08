@@ -283,7 +283,7 @@ export function DeckContent() {
                 background: "rgba(34, 211, 238, 0.15)",
                 border: "1px solid rgba(34, 211, 238, 0.3)"
               }}>
-                <span className="text-xs font-medium text-arcana-cyan">v0.3.4</span>
+                <span className="text-xs font-medium text-arcana-purple">v0.3.5-beta</span>
               </div>
               
               <p className="mb-10 text-base leading-relaxed text-gray-400 md:text-lg">
