@@ -53,7 +53,7 @@ jobs:
         run: |
           npm install @capacitor/assets
           mkdir -p assets
-          cp public/images/icon (2005px).png assets/icon.png || true
+          cp "public/images/icon (2005px).png" assets/icon.png || true
           cp public/images/logo-do-app.png assets/splash.png || true
           npx capacitor-assets generate --android
           npx cap sync android
