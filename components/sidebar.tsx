@@ -63,10 +63,10 @@ export function Sidebar({ activeView, onViewChange, onSettingsClick }: SidebarPr
           Só aparece em telas < 768px (md)
       ══════════════════════════════════════════════════════════════ */}
       <div 
-  className="flex h-14 w-full items-center justify-between border-b border-arcana-purple/20 bg-arcana-dark/60 px-4 backdrop-blur-md md:hidden"
+  className="flex w-full items-center justify-between border-b border-arcana-purple/20 bg-arcana-dark/60 px-4 pb-3 backdrop-blur-md md:hidden"
   style={{
     // 📱 Safe area: respeita status bar
-    paddingTop: "env(safe-area-inset-top, 0px)",
+    paddingTop: "calc(env(safe-area-inset-top, 0px) + 0.75rem)",
   }}
 >        
         {/* Botão Hambúrguer */}
@@ -119,7 +119,7 @@ export function Sidebar({ activeView, onViewChange, onSettingsClick }: SidebarPr
         <div className="flex items-center justify-between border-b border-arcana-purple/20 p-4">
           <div className="flex items-center gap-3">
             <img 
-              src="/images/icon.png" 
+              src="/images/icon (512px).png" 
               alt="Arcana" 
               className="h-8 w-8 rounded-lg border border-arcana-purple/40 object-cover"
               style={{ boxShadow: `0 0 ${10 * neonIntensity}px rgba(147, 51, 234, ${0.3 * neonIntensity})` }}
