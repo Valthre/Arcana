@@ -7,6 +7,7 @@ import { useRef, useState, useEffect } from "react"
 import { X, Download, Upload, Share2, Copy, Check, AlertCircle, Zap, Settings, Gauge, Sparkles as SparklesIcon, Smartphone } from "lucide-react"
 import { useArcana } from "@/contexts/arcana-context"
 import { useDeviceOptimization } from "@/hooks/use-device-optimization"
+import { useFirstVisit } from "@/hooks/use-first-visit"
 
 interface SettingsPanelProps {
   onClose: () => void
@@ -82,6 +83,7 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
     shareBackup,
     copyBackupToClipboard 
   } = useArcana()
+  const { resetFirstVisit } = useFirstVisit()
   
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [isExporting, setIsExporting] = useState(false)
@@ -144,6 +146,15 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
       showToast(result.message, result.success ? "success" : "error")
     } catch (error) {
       showToast("Erro ao copiar", "error")
+    }
+  }
+
+  const handleResetFirstVisit = () => {
+    try {
+      resetFirstVisit()
+      showToast("Primeira visita resetada", "success")
+    } catch (e) {
+      showToast("Erro ao resetar visita", "error")
     }
   }
 
@@ -498,6 +509,8 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
                                 {quality === "low" && "⚡ Baixo"}
                                 {quality === "medium" && "✨ Médio"}
                                 {quality === "high" && "💫 Alto"}
+                        
+                        {/* After quality radio grid we will add reset button below in advanced options */}
                               </button>
                             ))}
                           </div>
@@ -538,6 +551,19 @@ export function SettingsPanel({ onClose }: SettingsPanelProps) {
                         {/* Info */}
                         <div className="rounded bg-arcana-cyan/10 p-2 text-[10px] text-arcana-cyan">
                           💡 <strong>Dica:</strong> Desative "Modo Performance" para controlar manualmente
+                        </div>
+
+                        {/* Botão Para resetar primeira visita */}
+                        <div className="mt-3">
+                          <button
+                            onClick={handleResetFirstVisit}
+                            className="w-full rounded-lg bg-red-500/20 px-3 py-2 text-xs font-medium text-red-400 transition-all duration-200 hover:bg-red-500/30 hover:text-red-300"
+                          >
+                            Resetar primeira visita
+                          </button>
+                          <p className="mt-1 text-[10px] text-muted-foreground">
+                            <em>Reinicia o estado de primeiro acesso (apenas para testes).</em>
+                          </p>
                         </div>
                       </div>
                     </div>

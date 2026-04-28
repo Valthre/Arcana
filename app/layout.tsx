@@ -4,8 +4,9 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "ARCANA - Sua Biblioteca Local",
-  description: "Salve seus prompts e fragmentos de código com total privacidade. Um app Open Source!",
-  keywords: ["Código", "Open Source", "Prompts", "Segurança", "Programação", "Produtividade", "Offline-first", "Privacidade", "Arcana App", "Dev Tools", "Notes", "Anotações"],
+  metadataBase: new URL("https://arcana-ruddy.vercel.app"),
+  description: "Salve seus prompts e fragmentos de código com total privacidade!",
+  keywords: ["Código", "Open Source", "Prompts", "Segurança", "Programação", "Produtividade", "Offline-first", "Privacidade", "Arcana", "Dev Tools", "Notes", "Anotações", "Ogranização", "Desenvolvimento", "Software", "Tecnologia", "Armazenamento local", "Biblioteca de código", "Fragmentos de código", "Gerenciamento de conhecimento", "Desenvolvedores", "Programadores"],
   authors: [{ name: "Valthre", url: "https://github.com/Valthre" }],
   manifest: "/manifest.json",
   verification: {
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "ARCANA - Sua Biblioteca Local",
-    description: "Privacidade e controle sobre seus códigos.",
+    description: "Tenha privacidade e controle sobre seus códigos.",
     url: "https://arcana-ruddy.vercel.app",
     siteName: "Arcana",
     images: [
