@@ -1,6 +1,6 @@
 {
   "name": "arcana-app",
-  "version": "0.3.6-beta",
+  "version": "0.3.7-beta",
   "private": true,
   "scripts": {
     "build": "next build",
@@ -73,12 +73,13 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "baseline-browser-mapping": "^2.10.0",
-    "postcss": "^8.5",
+    "postcss": "^8.5.10",
     "tailwindcss": "^4.1.9",
     "tw-animate-css": "1.3.3",
     "typescript": "^5"
   },
   "overrides": {
-    "yauzl": "3.2.1"
+    "yauzl": "3.2.1",
+    "postcss": "^8.5.10"
   }
 }
