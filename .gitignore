@@ -10,6 +10,9 @@
 # production
 /build
 
+# vscode
+.vscode/
+
 # native
 *.key
 *.jks
